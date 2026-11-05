@@ -1,0 +1,7 @@
+target/
+.maven-repository/
+.allure/
+.idea/
+*.iml
+.vscode/
+*.log

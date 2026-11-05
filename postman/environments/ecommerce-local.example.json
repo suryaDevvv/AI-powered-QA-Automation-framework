@@ -1,0 +1,14 @@
+{
+  "id": "qa-ecommerce-local-example",
+  "name": "Ecommerce Practice Site",
+  "values": [
+    {
+      "key": "baseUrl",
+      "value": "https://automationexercise.com",
+      "type": "default",
+      "enabled": true
+    }
+  ],
+  "_postman_variable_scope": "environment",
+  "_postman_exported_using": "Postman"
+}

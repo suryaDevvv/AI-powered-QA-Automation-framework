@@ -1,0 +1,237 @@
+{
+  "info": {
+    "name": "AI-Driven QA Ecommerce API Checks",
+    "description": "Practice collection for the Automation Exercise products and account APIs.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "const suffix = Date.now().toString() + Math.floor(Math.random() * 100000).toString();",
+          "if (!pm.collectionVariables.get('baseUrl')) pm.collectionVariables.set('baseUrl', 'https://automationexercise.com');",
+          "if (!pm.collectionVariables.get('qaEmail')) pm.collectionVariables.set('qaEmail', 'qa.' + suffix + '@example.com');",
+          "if (!pm.collectionVariables.get('qaPassword')) pm.collectionVariables.set('qaPassword', 'QaPractice123!');",
+          "if (!pm.collectionVariables.get('qaName')) pm.collectionVariables.set('qaName', 'QA User');",
+          "if (!pm.collectionVariables.get('qaUpdatedName')) pm.collectionVariables.set('qaUpdatedName', 'Updated QA User');"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://automationexercise.com",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "GET product catalogue",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Accept", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/productsList"
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "type": "text/javascript",
+          "exec": [
+            "pm.test('HTTP 200 and API response code 200', function () {",
+            "  pm.response.to.have.status(200);",
+            "  pm.expect(pm.response.json().responseCode).to.eql(200);",
+            "  pm.expect(pm.response.json().products).to.be.an('array').that.is.not.empty;",
+            "});"
+          ]
+        }
+      }]
+    },
+    {
+      "name": "POST search products",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Accept", "value": "application/json" }],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [{ "key": "search_product", "value": "top", "type": "text" }]
+        },
+        "url": "{{baseUrl}}/api/searchProduct"
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "type": "text/javascript",
+          "exec": [
+            "pm.test('Search returns products', function () {",
+            "  pm.response.to.have.status(200);",
+            "  pm.expect(pm.response.json().responseCode).to.eql(200);",
+            "  pm.expect(pm.response.json().products).to.be.an('array').that.is.not.empty;",
+            "});"
+          ]
+        }
+      }]
+    },
+    {
+      "name": "POST create user account",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Accept", "value": "application/json" }],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            { "key": "name", "value": "{{qaName}}", "type": "text" },
+            { "key": "email", "value": "{{qaEmail}}", "type": "text" },
+            { "key": "password", "value": "{{qaPassword}}", "type": "text" },
+            { "key": "title", "value": "Mrs", "type": "text" },
+            { "key": "birth_date", "value": "12", "type": "text" },
+            { "key": "birth_month", "value": "May", "type": "text" },
+            { "key": "birth_year", "value": "1992", "type": "text" },
+            { "key": "firstname", "value": "Qa", "type": "text" },
+            { "key": "lastname", "value": "Tester", "type": "text" },
+            { "key": "company", "value": "QA Practice", "type": "text" },
+            { "key": "address1", "value": "21 Test Street", "type": "text" },
+            { "key": "address2", "value": "Suite 2", "type": "text" },
+            { "key": "country", "value": "India", "type": "text" },
+            { "key": "zipcode", "value": "560001", "type": "text" },
+            { "key": "state", "value": "Karnataka", "type": "text" },
+            { "key": "city", "value": "Bengaluru", "type": "text" },
+            { "key": "mobile_number", "value": "9876543210", "type": "text" }
+          ]
+        },
+        "url": "{{baseUrl}}/api/createAccount"
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "type": "text/javascript",
+          "exec": [
+            "pm.test('Unique account is created', function () {",
+            "  pm.response.to.have.status(200);",
+            "  pm.expect(pm.response.json().responseCode).to.eql(201);",
+            "});"
+          ]
+        }
+      }]
+    },
+    {
+      "name": "GET user account detail",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Accept", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/getUserDetailByEmail?email={{qaEmail}}"
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "type": "text/javascript",
+          "exec": [
+            "pm.test('Account details are returned', function () {",
+            "  pm.response.to.have.status(200);",
+            "  pm.expect(pm.response.json().responseCode).to.eql(200);",
+            "  pm.expect(pm.response.json().user.email).to.eql(pm.collectionVariables.get('qaEmail'));",
+            "});"
+          ]
+        }
+      }]
+    },
+    {
+      "name": "PUT update user account",
+      "request": {
+        "method": "PUT",
+        "header": [{ "key": "Accept", "value": "application/json" }],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            { "key": "name", "value": "{{qaUpdatedName}}", "type": "text" },
+            { "key": "email", "value": "{{qaEmail}}", "type": "text" },
+            { "key": "password", "value": "{{qaPassword}}", "type": "text" },
+            { "key": "title", "value": "Mrs", "type": "text" },
+            { "key": "birth_date", "value": "12", "type": "text" },
+            { "key": "birth_month", "value": "May", "type": "text" },
+            { "key": "birth_year", "value": "1992", "type": "text" },
+            { "key": "firstname", "value": "Qa", "type": "text" },
+            { "key": "lastname", "value": "Tester", "type": "text" },
+            { "key": "company", "value": "QA Practice", "type": "text" },
+            { "key": "address1", "value": "21 Test Street", "type": "text" },
+            { "key": "address2", "value": "Suite 2", "type": "text" },
+            { "key": "country", "value": "India", "type": "text" },
+            { "key": "zipcode", "value": "560001", "type": "text" },
+            { "key": "state", "value": "Karnataka", "type": "text" },
+            { "key": "city", "value": "Bengaluru", "type": "text" },
+            { "key": "mobile_number", "value": "9876543210", "type": "text" }
+          ]
+        },
+        "url": "{{baseUrl}}/api/updateAccount"
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "type": "text/javascript",
+          "exec": [
+            "pm.test('Account is updated', function () {",
+            "  pm.response.to.have.status(200);",
+            "  pm.expect(pm.response.json().responseCode).to.eql(200);",
+            "});"
+          ]
+        }
+      }]
+    },
+    {
+      "name": "DELETE user account",
+      "request": {
+        "method": "DELETE",
+        "header": [{ "key": "Accept", "value": "application/json" }],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            { "key": "email", "value": "{{qaEmail}}", "type": "text" },
+            { "key": "password", "value": "{{qaPassword}}", "type": "text" }
+          ]
+        },
+        "url": "{{baseUrl}}/api/deleteAccount"
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "type": "text/javascript",
+          "exec": [
+            "pm.test('Account is deleted', function () {",
+            "  pm.response.to.have.status(200);",
+            "  pm.expect(pm.response.json().responseCode).to.eql(200);",
+            "});"
+          ]
+        }
+      }]
+    },
+    {
+      "name": "PUT update account without valid credentials",
+      "request": {
+        "method": "PUT",
+        "header": [{ "key": "Accept", "value": "application/json" }],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            { "key": "email", "value": "not-created@example.com", "type": "text" },
+            { "key": "password", "value": "incorrect-password", "type": "text" }
+          ]
+        },
+        "url": "{{baseUrl}}/api/updateAccount"
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "type": "text/javascript",
+          "exec": [
+            "pm.test('Update is rejected without account credentials', function () {",
+            "  pm.response.to.have.status(200);",
+            "  pm.expect(pm.response.json().responseCode).to.eql(404);",
+            "});"
+          ]
+        }
+      }]
+    }
+  ]
+}
